@@ -1,45 +1,153 @@
-# API das Ninas!
+<div align="center">
 
-### Essa API foi feita para gerenciar a rede social Ninas! A 6º colocada, da empresa desafiadora MCTIC, na semifinal do [Mega Hack Women!!](https://www.megahackwomen.com.br/resultado/)
+# API das Ninas
 
- #### O que tem nessa API:
- - [x] Cadastro de usuário já criptografado
- - [x] Login na plataforma com token de  verificação
- - [x] Envio de email para recuperação de senha
- - [x] Banco de dados MongoDB em Container do Docker
- - [ ] Redefinição de senha (em andamento)
- 
- #### Tecnologias utilizadas
- - NodeJS
- - Express
- - MongoDB
- - Docker
- - JWT
- - Cors
- 
-### Nosso obejtivo é criar uma plataforma que una, inspire e ajude as mulheres empreendedoras na criação de suas Sturtups!
+API REST de autenticação da **Ninas**, uma rede social para mulheres que querem empreender em tecnologia.<br>
+6º lugar no desafio da MCTIC, na semifinal do [Mega Hack Women](https://www.megahackwomen.com.br/resultado/) (2020).
 
-#### Idealizadoras:
- 1. **[Bianca Amaral](https://www.linkedin.com/in/bia-amaral/)**
- 2. **[Camila Fersan](https://www.linkedin.com/in/camila-fernanda-santos/)**
- 3. **[Gabriela Cavalcante](https://www.linkedin.com/in/gabrielaacavalcante/)**
- 4. **[Maryana Morato](https://www.linkedin.com/in/maryanamorato/)** 
- 5. **[Talia Lino](https://www.linkedin.com/in/talia-lino-de-oliveira/)** 
- 
-#### O projeto
+![Node.js](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-4-000000?logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?logo=jsonwebtokens&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)
 
-De acordo com a ONU Mulheres, apenas 18% dos graduados em Ciências da Computação no mundo são mulheres. “Culturalmente, a informática sempre foi vista como uma profissão para homens”, diz Ajnsztajn, da Ace. Segundo ele, a maior parte das empreendedoras que conhece não são formadas em Computação.
+</div>
 
-Além disso, as mulheres empreendedoras continuam ganhando 22% menos que os empresários, uma situação que vem se repetindo desde 2015, segundo dados da Pesquisa Nacional por Amostra de Domicílios Contínua (PNADC), do Instituto Brasileiro de Geografia e Estatística (IBGE). Em 2018, os donos de negócio do sexo masculino tiveram um rendimento mensal médio de R$ 2.344, enquanto que o rendimento das mulheres ficou em R$ 1.831.
+## Sobre o projeto
 
-A desvantagem para as empresárias também é significativa quando se trata de acesso a crédito e linhas de financiamento. As mulheres empresárias acessam um valor médio de empréstimos de aproximadamente R$ 13 mil a menos que a média liberada aos homens. Apesar disso, elas pagam taxas de juros 3,5% acima do sexo masculino. Nesse aspecto, nem os índices de inadimplência mais baixos, verificados entre as pagadoras do sexo feminino, foram suficientes para gerar uma redução dos juros. Enquanto 3,7% das mulheres são inadimplentes, os homens apresentam um indicador de 4,2%.
+Segundo a ONU Mulheres, só 18% das pessoas formadas em Ciência da Computação no mundo são mulheres. No Brasil, dados da PNAD Contínua (IBGE) mostram que as empreendedoras ganham cerca de 22% menos que os empreendedores. Elas também conseguem empréstimos menores e pagam juros mais altos, mesmo com inadimplência menor.
 
-Por isso, nós propomos uma rede social para todas as mulheres que quiserem empreender na área de tecnologia, sejam elas com um projeto pronto ou apenas com a vontade de ter seu próprio negócio.
+A Ninas propõe uma rede social para mulheres que querem empreender em tecnologia, com ou sem um projeto pronto. Na rede, elas encontram conteúdos sobre cada fase do empreendedorismo e conversam com outras mulheres para trocar ideias ou formar um time. Depois, podem cadastrar a ideia para investidores. Quando o interesse é recíproco (um *match*), a conversa entre a idealizadora e o investidor é liberada.
 
-Nessa rede as mulheres irão encontrar ajuda para o seu empreendimento, desde livros, artigos e cursos sobre vários assuntos ligados a fases do empreendedorismo. Também será possível conversar com outras mulheres, de diversas áreas, que estão em busca de trocar ideias, de se ajudar e até mesmo formar uma equipe para desenvolver um projeto.
+Esta API é a base de contas e autenticação da plataforma.
 
-E por fim, depois que a mulher tiver segura de seu projeto e com um squad massa, ela poderá investir em seu negócio, mesmo que elas não tenham uma grande renda inicial, na rede social, será possível cadastrar a sua ideia, onde investidores terão acesso aos projetos, e poderão escolher aquele que mais se encaixa com o perfil de seu investimento, criando um tipo de match, uma ligação recíproca, liberando o acesso a comunicação com a idealizadora do projeto, onde os dois poderão negociar e seguir adiante com o projeto.
- 
+## Funcionalidades
 
+- [x] Cadastro de usuária com senha criptografada (bcrypt, em um hook `pre('save')` do Mongoose)
+- [x] Login com token JWT válido por 24 horas
+- [x] Rotas protegidas por um middleware que valida o token `Bearer`
+- [x] Recuperação de senha: gera um token aleatório, válido por 1 hora, e envia por e-mail (Nodemailer com template Handlebars)
+- [x] Banco MongoDB rodando em um container Docker
+- [ ] Redefinição de senha com o token (em andamento)
 
+## Endpoints
 
+| Método | Rota | Autenticação | O que faz |
+|---|---|---|---|
+| `POST` | `/register` | não | Cria uma conta com `nome`, `email` e `password` |
+| `POST` | `/authenticate` | não | Valida e-mail e senha e devolve a usuária e um token JWT |
+| `POST` | `/forgot_password` | não | Envia por e-mail um token de recuperação |
+| `POST` | `/reset_password` | não | Troca a senha usando `email`, `token` e `password` (em andamento) |
+| `GET` | `/projects` | `Bearer` | Rota protegida de exemplo: devolve o id da usuária logada |
+
+### Exemplos
+
+```bash
+# Cadastro
+curl -X POST http://localhost:3000/register \
+  -H "Content-Type: application/json" \
+  -d '{"nome": "Maria", "email": "maria@email.com", "password": "senha123"}'
+
+# Login: a resposta traz { "user": { ... }, "token": "eyJhbGciOi..." }
+curl -X POST http://localhost:3000/authenticate \
+  -H "Content-Type: application/json" \
+  -d '{"email": "maria@email.com", "password": "senha123"}'
+
+# Rota protegida: a resposta traz { "ok": true, "user": "<id da usuária>" }
+curl http://localhost:3000/projects -H "Authorization: Bearer <token>"
+```
+
+Respostas de erro: `400` para e-mail já cadastrado ou usuária não encontrada, e `401` para senha errada ou token ausente, mal formatado ou inválido.
+
+Também há uma coleção do Postman com todas as rotas em [`docs/Ninas_API.postman_collection.json`](docs/Ninas_API.postman_collection.json). Ao fazer login por ela, o token é salvo automaticamente e usado na rota protegida.
+
+### Fluxo de autenticação
+
+```mermaid
+sequenceDiagram
+    participant App
+    participant API
+    participant DB as MongoDB
+    App->>API: POST /authenticate (email, senha)
+    API->>DB: busca a usuária pelo e-mail
+    DB-->>API: usuária + hash da senha
+    API->>API: bcrypt.compare(senha, hash)
+    API-->>App: usuária + token JWT (24h)
+    App->>API: GET /projects<br>Authorization: Bearer token
+    API->>API: middleware valida o token
+    API-->>App: { ok: true, user: id }
+```
+
+## Como rodar
+
+Pré-requisitos: Node.js e Docker.
+
+**1. Suba o MongoDB**
+
+```bash
+docker run -d --name ninas-mongo -p 27017:27017 mongo:4.4
+```
+
+**2. Instale as dependências**
+
+```bash
+git clone https://github.com/talialino/Ninas_API.git
+cd Ninas_API
+npm install
+```
+
+**3. Crie os arquivos de configuração**
+
+A pasta `src/config/` está no `.gitignore` para que segredos não vão para o repositório. Crie dois arquivos nela:
+
+`src/config/auth.json`
+```json
+{ "secret": "troque-por-uma-chave-secreta" }
+```
+
+`src/config/mail.json` (dados de um servidor SMTP; para testes, o [Mailtrap](https://mailtrap.io) funciona bem)
+```json
+{ "host": "sandbox.smtp.mailtrap.io", "port": 2525, "user": "seu-usuario", "pass": "sua-senha" }
+```
+
+**4. Inicie a API**
+
+```bash
+npm start
+```
+
+A API sobe em `http://localhost:3000` e reinicia sozinha a cada alteração (nodemon).
+
+## Estrutura
+
+```
+├── index.js                      # servidor Express e conexão com o MongoDB
+└── src/
+    ├── routes.js                 # rotas públicas e protegidas
+    ├── controllers/
+    │   ├── authController.js     # cadastro, login e recuperação de senha
+    │   └── projectControllers.js # rota protegida de exemplo
+    ├── middlewares/auth.js       # validação do token JWT
+    ├── models/user.js            # schema da usuária e hash da senha
+    ├── modules/mailes.js         # envio de e-mail (Nodemailer + Handlebars)
+    └── resources/mail/           # template do e-mail de recuperação
+```
+
+## Próximos passos
+
+- Concluir a redefinição de senha, aplicando o hash na nova senha antes de salvar
+- Levar a URL do banco e os segredos para variáveis de ambiente (`.env`)
+- Criar os recursos da rede social: perfis, projetos e o *match* com investidores
+
+## Equipe
+
+1. **[Bianca Amaral](https://www.linkedin.com/in/bia-amaral/)**
+2. **[Camila Fersan](https://www.linkedin.com/in/camila-fernanda-santos/)**
+3. **[Gabriela Cavalcante](https://www.linkedin.com/in/gabrielaacavalcante/)**
+4. **[Maryana Morato](https://www.linkedin.com/in/maryanamorato/)**
+5. **[Talia Lino](https://www.linkedin.com/in/talia-lino-de-oliveira/)**: desenvolvimento da API
+
+## Licença
+
+[MIT](LICENSE)
