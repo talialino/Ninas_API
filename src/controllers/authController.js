@@ -11,13 +11,17 @@ const User = mongoose.model('User');
 
 module.exports = {
   async store(req, res) {
-    const { email } = req.body;
+    const { nome, email, password } = req.body;
 
     try {
       if (await User.findOne({ email }))
         return res.status(400).send({ error: 'User already exists' });
 
-      const user = await User.create(req.body);
+      // Só aceita os campos do cadastro, para ninguém gravar hash ou token pelo corpo da requisição.
+      const user = await User.create({ nome, email, password });
+
+      user.passwordHash = undefined;
+
       return res.json(user);
     } catch (err) {
       return res.status(400).send({ error: 'Register failed' });
@@ -86,12 +90,12 @@ module.exports = {
 
     try {
       const user = await User.findOne({ email }).select(
-        '+passwordResetToken passwordResetExpires'
+        '+passwordResetToken +passwordResetExpires'
       );
 
       if (!user) return res.status(400).send({ error: 'User not found' });
 
-      if (token !== user.passwordResetToken)
+      if (!user.passwordResetToken || token !== user.passwordResetToken)
         return res.status(400).send({ error: 'Token invalid' });
 
       const now = new Date();
@@ -101,7 +105,11 @@ module.exports = {
           .status(400)
           .send({ error: 'Token expired, generate a new one' });
 
-      user.passwordHash = password;
+      user.passwordHash = await bcrypt.hash(password, 10);
+
+      // O token vale para uma única troca de senha.
+      user.passwordResetToken = undefined;
+      user.passwordResetExpires = undefined;
 
       await user.save();
 

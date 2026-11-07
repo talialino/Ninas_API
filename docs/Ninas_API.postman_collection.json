@@ -79,7 +79,7 @@
       }
     },
     {
-      "name": "Redefinir senha (em andamento)",
+      "name": "Redefinir senha",
       "request": {
         "method": "POST",
         "header": [{ "key": "Content-Type", "value": "application/json" }],

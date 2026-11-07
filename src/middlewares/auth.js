@@ -8,8 +8,8 @@ module.exports = (req, res, next) => {
   if (!authHeader) return res.status(401).send({ error: 'Token not provided' });
 
   const parts = authHeader.split(' ');
-  if (!parts.length === 2)
-    return res.status.status(401).send({ error: 'Token error' });
+  if (parts.length !== 2)
+    return res.status(401).send({ error: 'Token error' });
 
   const [schema, token] = parts;
 

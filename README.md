@@ -28,8 +28,8 @@ Esta API é a base de contas e autenticação da plataforma.
 - [x] Login com token JWT válido por 24 horas
 - [x] Rotas protegidas por um middleware que valida o token `Bearer`
 - [x] Recuperação de senha: gera um token aleatório, válido por 1 hora, e envia por e-mail (Nodemailer com template Handlebars)
+- [x] Redefinição de senha com o token, que só pode ser usado uma vez
 - [x] Banco MongoDB rodando em um container Docker
-- [ ] Redefinição de senha com o token (em andamento)
 
 ## Endpoints
 
@@ -38,7 +38,7 @@ Esta API é a base de contas e autenticação da plataforma.
 | `POST` | `/register` | não | Cria uma conta com `nome`, `email` e `password` |
 | `POST` | `/authenticate` | não | Valida e-mail e senha e devolve a usuária e um token JWT |
 | `POST` | `/forgot_password` | não | Envia por e-mail um token de recuperação |
-| `POST` | `/reset_password` | não | Troca a senha usando `email`, `token` e `password` (em andamento) |
+| `POST` | `/reset_password` | não | Troca a senha usando `email`, `token` e `password` |
 | `GET` | `/projects` | `Bearer` | Rota protegida de exemplo: devolve o id da usuária logada |
 
 ### Exemplos
@@ -136,7 +136,6 @@ A API sobe em `http://localhost:3000` e reinicia sozinha a cada alteração (nod
 
 ## Próximos passos
 
-- Concluir a redefinição de senha, aplicando o hash na nova senha antes de salvar
 - Levar a URL do banco e os segredos para variáveis de ambiente (`.env`)
 - Criar os recursos da rede social: perfis, projetos e o *match* com investidores
 
